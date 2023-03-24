@@ -33,7 +33,8 @@ text = """
 Joe: Hey Steve, how's it going?
 Steve: I'm well, how about you?
 Joe: I'm fine. *Spills water on Steve's new shirt*.
-You can only select one emotion, happy, sad, or angry. In one word, how does Steve feel?
+
+Between happy, angry, and sad,how do you think Steve feels? Answer in one word.
 Answer:"""
 
 # Loading custom settings
@@ -60,16 +61,16 @@ def get_reply(text):
         temperature=1.99, 
         top_p=0.18, 
         typical_p=1, 
-        repetition_penalty=1.5, 
+        repetition_penalty=1.15, 
         encoder_repetition_penalty=1, 
-        top_k=30, 
+        top_k=89, 
         min_length=0, 
         no_repeat_ngram_size=0, 
         num_beams=1, 
         penalty_alpha=0, 
-        length_penalty=1,
-        early_stopping=False,
-        stopping_string='\n'
+        length_penalty=1.4,
+        eos_token='\n',
+        early_stopping=False
     )
     return generator
 
@@ -81,11 +82,10 @@ def get_reply(text):
 async def handle_text(websocket, path):
     async for message in websocket:
         response = message
-        print(f"Received text: {response}")
         json_data = json.loads(response)
         dictionary_data = dict(json_data)
 
-        for reply in get_reply(text=text):
+        for reply in get_reply(dictionary_data["text"]):
             print(reply)
             await websocket.send(reply)
 
