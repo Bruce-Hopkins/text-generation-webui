@@ -96,6 +96,8 @@ def generate_reply(question, max_new_tokens, do_sample, temperature, top_p, typi
     clear_torch_cache()
     t0 = time.time()
 
+    print(shared.model)
+
     # These models are not part of Hugging Face, so we handle them
     # separately and terminate the function call earlier
     if shared.is_RWKV:
@@ -134,10 +136,12 @@ def generate_reply(question, max_new_tokens, do_sample, temperature, top_p, typi
     if stopping_string is not None:
         # Copied from https://github.com/PygmalionAI/gradio-ui/blob/master/src/model.py
         t = encode(stopping_string, 0, add_special_tokens=False)
+         
         stopping_criteria_list.append(_SentinelTokenStoppingCriteria(sentinel_token_ids=t, starting_idx=len(input_ids[0])))
 
     generate_params = {}
     if not shared.args.flexgen:
+
         generate_params.update({
             "max_new_tokens": max_new_tokens,
             "eos_token_id": eos_token_ids,
